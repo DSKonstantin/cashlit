@@ -1,0 +1,41 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicedayzhu/tauri-awesome/main/tauri-conf-schema.json",
+  "productName": "Cashlit",
+  "version": "0.1.0",
+  "identifier": "com.cashlit.app",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Cashlit",
+        "width": 620,
+        "height": 520,
+        "minWidth": 480,
+        "minHeight": 500,
+        "decorations": false,
+        "transparent": true,
+        "resizable": true
+      }
+    ],
+    "macOSPrivateApi": true,
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src ipc: http://ipc.localhost tauri: https://api-sandbox.coinflow.cash https://api.coinflow.cash"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png",
+      "icons/icon.icns"
+    ]
+  },
+  "plugins": {}
+}

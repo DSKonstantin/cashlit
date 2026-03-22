@@ -51,15 +51,33 @@ frontend-build: ## Build frontend only (Docker)
 # Release
 # ──────────────────────────────────────────────
 
-release: ## Build release .app / .dmg bundle
+release: ## Build release .app / .dmg bundle (ad-hoc signed, no Apple account needed)
 	@echo "→ Building frontend via Docker..."
 	@$(DOCKER_NODE) sh -c "npm install --silent && npm run build"
 	@echo "→ Building Tauri release..."
 	@cd src-tauri && cargo tauri build
+	@echo "→ Ad-hoc signing .app (removes 'damaged' Gatekeeper error)..."
+	@APP_PATH=$$(find src-tauri/target/release/bundle/macos -name "*.app" | head -1); \
+	  if [ -n "$$APP_PATH" ]; then \
+	    codesign --force --deep --sign - "$$APP_PATH" && echo "  signed: $$APP_PATH"; \
+	  else \
+	    echo "  warning: .app not found, skipping signing"; \
+	  fi
 	@echo ""
 	@echo "✓ Release built!"
 	@echo "  .app  → src-tauri/target/release/bundle/macos/"
 	@echo "  .dmg  → src-tauri/target/release/bundle/dmg/"
+	@echo ""
+	@echo "  Note: users may see 'unidentified developer' on first launch."
+	@echo "  Fix: right-click → Open, or System Settings → Privacy & Security → Open Anyway"
+
+sign: ## Ad-hoc sign the built .app (run after make release if needed)
+	@APP_PATH=$$(find src-tauri/target/release/bundle/macos -name "*.app" | head -1); \
+	  if [ -n "$$APP_PATH" ]; then \
+	    codesign --force --deep --sign - "$$APP_PATH" && echo "✓ Signed: $$APP_PATH"; \
+	  else \
+	    echo "✗ No .app found. Run 'make release' first."; \
+	  fi
 
 open: ## Open the built .app (after make release)
 	@open src-tauri/target/release/bundle/macos/Payment\ Analytics.app 2>/dev/null || echo "No build found. Run 'make release' first."
